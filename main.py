@@ -5,7 +5,7 @@ import time
 import os
 
 # initialize the display
-os.environ["SDL_FBDEV"] = "/dev/fb1"
+#os.environ["SDL_FBDEV"] = "/dev/fb1"
 
 # initialize pygame
 pygame.init()
@@ -16,7 +16,7 @@ black=(0,0,0)
 lightGrey=(192,192,192)
 darkGrey=(64,64,64)
 grey=(128,128,128)
-red=(255,0,0)
+red=(0,0,255)
 green=(0,255,0)
 blue=(0,0,255)
 
@@ -27,7 +27,7 @@ monthsOfTheYear=('ErrMonth','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep
 # setup the display
 displayWidth = 160
 displayHeight = 128
-uiDisplay = pygame.display.set_mode((displayWidth,displayHeight), 0, 32)
+uiDisplay = pygame.display.set_mode((displayWidth,displayHeight))
 pygame.display.set_caption('ui')
 
 # update the display
@@ -41,7 +41,11 @@ pygame.mouse.set_visible(False)
 #pixAr[10][20] = green
 
 # set the default font
-font=pygame.font.SysFont(None,20)
+smallFont=pygame.font.SysFont(None,15)
+mediumFont=pygame.font.SysFont(None,20)
+defaultFont=pygame.font.SysFont(None,25)
+largeFont=pygame.font.SysFont(None,30)
+analogClockFont=pygame.font.SysFont(None,22)
 
 # setup the fps clock
 clock = pygame.time.Clock()
@@ -61,11 +65,54 @@ def centeredPolarLine(uiDisplay,color,angleDegrees,radius,centerPoint,lineWidth)
     coords=(((math.cos(angleRadians)*radius)+(centerPoint[0])),((math.sin(angleRadians)*radius)+(centerPoint[1])))
     pygame.draw.line(uiDisplay,color,centerPoint,coords,lineWidth)
 
-def messageToScreen(msg,color,location,fontSize):
-    font=pygame.font.SysFont(None,int(fontSize))
-    screen_text=font.render(msg, True, color)
+def postTextSimple(msg,color,location,font):
+    if font=="analogClockFont":
+        screen_text=analogClockFont.render(msg, True, color)
+    else:
+        screen_text=defaultFont.render(msg, True, color)
     uiDisplay.blit(screen_text,location)
 
+
+def text_objects(text,color,font):
+    if font=="analogClockFont":
+        textSurface=analogClockFont.render(text, True, color)
+    else:
+        textSurface=defaultFont.render(text, True, color)
+    return textSurface, textSurface.get_rect()
+
+
+def postTextCentered(msg,color,xDisplace=0,yDisplace=0,font="defaultFont"):
+    textSurf, textRect = text_objects(msg,color,font)
+    #screen_text=font.render(msg, True, color)
+    #uiDisplay.blit(screen_text,location)
+    textRect.center = (displayWidth/2)+xDisplace,(displayHeight/2)+yDisplace
+    uiDisplay.blit(textSurf, textRect)
+
+
+def uiDScheduleLoop():
+    # setup the uiExit variable
+    uiExit = False
+    while not uiExit:        
+        # event handling loop
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                uiExit = True
+            if event.type == pygame.KEYDOWN:
+                print(event)
+                if event.key == 27:
+                    uiExit = True
+            #print(event)
+        
+        uiDisplay.fill(black)
+        postTextCentered("hello",white,0,0)
+        pygame.display.update()
+        # set the frames per second to 30, the correctnumber for the clock
+        clock.tick(30)
+
+    # close out the display
+    pygame.quit()
+
+    
 def uiAnalogClockLoop():    
     # setup the uiExit variable
     uiExit = False
@@ -89,15 +136,20 @@ def uiAnalogClockLoop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 uiExit = True
+            if event.type == pygame.KEYDOWN:
+                print(event)
+                if event.key == 27:
+                    uiExit = True
             #print(event)
-        # Display code
+                    
+        # The actual graphics code
 
         # Clear the display
         uiDisplay.fill(black)
         
         # Incriment second hand rotation
         if rotationSecondHand<=360.4:
-            rotationSecondHand+=0.2
+            rotationSecondHand+=0.4
         else:
             # Update the time
             clockTime=time.localtime(None)
@@ -111,10 +163,10 @@ def uiAnalogClockLoop():
             currentYear=str(clockTime.tm_year)
         
         # add the date data to the screen
-        messageToScreen(currentMonth,lightGrey,[4,24],22)
-        messageToScreen(currentNumday,lightGrey,[12,40],22)
-        messageToScreen(currentWeekday,lightGrey,[4,95],22)
-        messageToScreen(currentYear,lightGrey,[4,110],22)
+        postTextSimple(currentMonth,lightGrey,[4,24],"analogClockFont")
+        postTextSimple(currentNumday,lightGrey,[12,40],"analogClockFont")
+        postTextSimple(currentWeekday,lightGrey,[4,95],"analogClockFont")
+        postTextSimple(currentYear,lightGrey,[4,110],"analogClockFont")
         
         # Draw the circle for the watch face
         pygame.draw.circle(uiDisplay,grey,(96,64),64,4)
@@ -145,10 +197,11 @@ def uiAnalogClockLoop():
         # update our display
         pygame.display.update()
         # set the frames per second to 30, the correctnumber for the clock
-        clock.tick(30)
+        clock.tick(15)
 
     # close out the display
     pygame.quit()
 
 uiAnalogClockLoop()
+#uiDScheduleLoop()
 #quit()
