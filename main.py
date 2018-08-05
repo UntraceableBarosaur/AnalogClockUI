@@ -5,7 +5,7 @@ import time
 import os
 
 # initialize the display
-#os.environ["SDL_FBDEV"] = "/dev/fb1"
+os.environ["SDL_FBDEV"] = "/dev/fb1"
 
 # initialize pygame
 pygame.init()
