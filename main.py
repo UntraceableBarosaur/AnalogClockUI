@@ -149,7 +149,7 @@ def uiAnalogClockLoop():
         
         # Incriment second hand rotation
         if rotationSecondHand<=360.4:
-            rotationSecondHand+=0.5
+            rotationSecondHand+=0.55
         else:
             # Update the time
             clockTime=time.localtime(None)
