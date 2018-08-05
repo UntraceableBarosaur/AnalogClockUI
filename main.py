@@ -4,6 +4,9 @@ import math
 import time
 import os
 
+# initialize the display
+os.environ["SDL_FBDEV"] = "/dev/fb1"
+
 # initialize pygame
 pygame.init()
 
@@ -24,7 +27,7 @@ monthsOfTheYear=('ErrMonth','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep
 # setup the display
 displayWidth = 160
 displayHeight = 128
-uiDisplay = pygame.display.set_mode((displayWidth,displayHeight))
+uiDisplay = pygame.display.set_mode((displayWidth,displayHeight), 0, 32)
 pygame.display.set_caption('ui')
 
 # update the display
