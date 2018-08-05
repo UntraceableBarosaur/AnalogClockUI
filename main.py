@@ -149,7 +149,7 @@ def uiAnalogClockLoop():
         
         # Incriment second hand rotation
         if rotationSecondHand<=360.4:
-            rotationSecondHand+=0.6
+            rotationSecondHand+=0.5
         else:
             # Update the time
             clockTime=time.localtime(None)
@@ -197,7 +197,7 @@ def uiAnalogClockLoop():
         # update our display
         pygame.display.update()
         # set the frames per second to 30, the correctnumber for the clock
-        clock.tick(10)
+        clock.tick(15)
 
     # close out the display
     pygame.quit()
